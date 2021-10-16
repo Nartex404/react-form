@@ -10,32 +10,38 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Select from '@mui/material/Select';
-import { NativeSelect } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
-import { FormHelperText } from '@mui/material';
 import { MenuItem } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Axios from 'axios'
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 
 const theme = createTheme();
 
 export default function App() {
 
-
   const[userName, setUserName] = useState('');
   const[userLastName, setUserLastName] = useState('');
   const[userCountry, setUserCountry] = useState('')
-
   const[countriesList, setCountriesList] = useState([]);
-
-  const [error, setError] = useState("")
-
-  
+  const [userList, setUserList] = useState([])
 
 useEffect(() => {
   Axios.get('http://localhost:3031/api/get').then((response) => {
     setCountriesList(response.data)
+  })
+}, [])
+
+useEffect(() => {
+  Axios.get('http://localhost:3031/api/getUsers').then((response) => {
+    setUserList(response.data)
   })
 }, [])
 
@@ -133,6 +139,32 @@ useEffect(() => {
             >
               Enviar
             </Button>
+
+            <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 360 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell  align="center">Id Usuario</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Apellido</TableCell>
+                  <TableCell align="center">Pais</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {userList.map((row) => (
+                  <TableRow
+                    key={row.name}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell  align="center" >{row.idUser}</TableCell>
+                    <TableCell >{row.userName}</TableCell>
+                    <TableCell >{row.userLastName}</TableCell>
+                    <TableCell align="center">{row.userCountry}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
           </Box>
         </Box>
       </Container>

@@ -14,6 +14,13 @@ app.use(cors())
 app.use(express.json())
 app.use(bodyParser.urlencoded({extended: true}))
 
+//Route for get all data from Users table in DB
+app.get("/api/getUsers", (req,res) => {
+    const sqlSelect =  "SELECT * FROM User";
+    db.query (sqlSelect, (err,result) => {
+        res.send(result)
+         });   
+});
 
 //Route for get all countries from DB
 app.get("/api/get", (req,res) => {
