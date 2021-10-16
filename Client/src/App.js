@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+import React, {useEffect, useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -10,23 +10,49 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Select from '@mui/material/Select';
+import { NativeSelect } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
+import { FormHelperText } from '@mui/material';
+import { MenuItem } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import Axios from 'axios'
 
 
 const theme = createTheme();
 
 export default function App() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      firstName: data.get('firstName'),
-      lastName: data.get('lastName'),
-    });
-  };
+
+
+  const[userName, setUserName] = useState('');
+  const[userLastName, setUserLastName] = useState('');
+  const[userCountry, setUserCountry] = useState('')
+
+  const[countriesList, setCountriesList] = useState([]);
+
+  
+
+useEffect(() => {
+  Axios.get('http://localhost:3031/api/get').then((response) => {
+    setCountriesList(response.data)
+  })
+}, [])
+
+  const handleSubmit = () => {
+    if (userName === '' || userLastName === '' || userCountry === ''){
+        console.log("Debes completar todos los campos")
+    }
+    else{
+        Axios.post('http://localhost:3031/api/insert', {
+
+          userName: userName, 
+          userLastName: userLastName, 
+          userCountry:userCountry,
+        }).then (() => {
+          alert("Cargue realizado con exito");
+        });
+      };
+    }
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -44,7 +70,7 @@ export default function App() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Ingresa Tu Información
+            Ingresa Tu Información!
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -57,6 +83,9 @@ export default function App() {
                   id="firstName"
                   label="Nombre"
                   autoFocus
+                  onChange={(e) => {
+                    setUserName(e.target.value)
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -67,21 +96,30 @@ export default function App() {
                   label="Apellido"
                   name="lastName"
                   autoComplete="lname"
+                  onChange={(e) => {
+                    setUserLastName(e.target.value)
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
-                <InputLabel id="select-country-label">pais</InputLabel>
-                <Select
+              <InputLabel id="select-country-label">Selecciona un pais</InputLabel>
+              <Select
+                  name="select-country-label"
                   labelId="select-country-label"
                   id="select-country"
                   required
                   fullWidth
+                  value={countriesList.id}
                   label="Select a country"
-                  //onChange={handleChange}
+                  onChange={(e) => {
+                    console.log("country selected")
+                    setUserCountry(e.target.value)
+                  }}
                   >
-                    <MenuItem value={'Colombia'}>Colombia</MenuItem>
-                    <MenuItem value={'Francia'}>Francia</MenuItem>
-                    <MenuItem value={'Italia'}>Italia</MenuItem>
+                    <MenuItem value=""><em>None</em></MenuItem>
+                    {countriesList.map((country, index) => (
+                      <MenuItem key={index} value={country.name}>{country.name}</MenuItem>
+                    ))}
                   </Select>
               </Grid>
             </Grid>
