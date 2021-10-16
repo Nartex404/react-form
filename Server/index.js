@@ -5,10 +5,10 @@ const mysql = require('mysql')
 const cors = require("cors");
 
 const db = mysql.createPool({
-    host:'localhost',
-    user:'root',
-    password:'',
-    database:'ReactDB',
+    host:'reactdbaws.cfnro2e8t5cb.us-east-2.rds.amazonaws.com',
+    user:'admin',
+    password:'Nartex404',
+    database:'ReactDBAWS',
 });
 app.use(cors())
 app.use(express.json())
