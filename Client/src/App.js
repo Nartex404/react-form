@@ -29,6 +29,8 @@ export default function App() {
 
   const[countriesList, setCountriesList] = useState([]);
 
+  const [error, setError] = useState("")
+
   
 
 useEffect(() => {
@@ -40,6 +42,7 @@ useEffect(() => {
   const handleSubmit = () => {
     if (userName === '' || userLastName === '' || userCountry === ''){
         console.log("Debes completar todos los campos")
+        alert("Debes completar todos los campos para continuar")
     }
     else{
         Axios.post('http://localhost:3031/api/insert', {
@@ -47,9 +50,8 @@ useEffect(() => {
           userName: userName, 
           userLastName: userLastName, 
           userCountry:userCountry,
-        }).then (() => {
-          alert("Cargue realizado con exito");
-        });
+        })
+        alert("Cargue realizado con exito");
       };
     }
 
